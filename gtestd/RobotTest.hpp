@@ -2,6 +2,7 @@
 #define _ROBOT_TEST_H_
 
 #include <gtest/gtest.h>
+#include <stdexcept>
 #include "../hdr/Robot.h"
 class RobotTest: public ::testing::Test{
     public:
@@ -13,6 +14,15 @@ class RobotTest: public ::testing::Test{
         };
         void TearDown(){delete R1; delete R2;};
 };
+
+TEST(RobotTest1, Robot_Test){
+    EXPECT_THROW({
+            Robot R(1.0, 10.0, 45.0, "");
+            }, std::length_error);
+    EXPECT_THROW({
+            Robot R(-1, -3, 10, "R");
+            }, std::range_error);
+}
 
 TEST_F(RobotTest, get_x_test){
     // Assert
@@ -40,6 +50,7 @@ TEST_F(RobotTest, move_to_test){
     //Assert
     ASSERT_TRUE(R1->get_x() == 2.1);
     ASSERT_TRUE(R1->get_y() == 2.5);
+    EXPECT_THROW({R2->move_to(-10, -10);}, std::range_error);
 }
 
 TEST_F(RobotTest, rotate_test){
@@ -48,6 +59,7 @@ TEST_F(RobotTest, rotate_test){
 
     //Assert
     ASSERT_TRUE(R1->get_angle() == 46.0);
+    EXPECT_THROW({R1->rotate(-100);}, std::range_error);
 }
 
 TEST_F(RobotTest, operator_GT_test){

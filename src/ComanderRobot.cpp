@@ -8,6 +8,26 @@
 // Нужно ли проверять наличие в списке, пообще этой при необходимости делается методом класса вектор
 // Есть предложение проверять наличие Робота в списке подчинений и потом добавлять если его там нет
 // Как будто это выгоднее по ресурсам чем написанное ниже
+template <typename T>
+int cpy(std::vector<T>*V1, const std::vector<T>& V2){
+    std::copy(V2.begin(), V2.end(), back_inserter(*V1));
+    return 0;
+}
+
+CommanderRobot::CommanderRobot(double x, double y, double angle,
+        std::string name, CommanderRobot* commander,
+        const std::vector<WorkingRobot*>& depens):
+    WorkingRobot(x, y, angle, name, commander){
+    cpy(&this->depens, depens);
+    //std::cout << depens.size() << std::endl;
+    //for(int i = 0; i<(int)depens.size(); i++){
+      //  depens[i]->print();
+        //this->depens[i]->print();
+    //};
+};
+
+
+
 void CommanderRobot::add_dep(WorkingRobot *new_WR){
     this->depens.push_back(new_WR);
     std::vector<WorkingRobot*>::iterator ip;

@@ -38,6 +38,7 @@ class Robot{
         double get_x() const;
         double get_y() const;
         std::string get_name() const;
+        void print() const;
 
         // change robots position (x0, y0) -> (x0+dx, y0+dy)
         bool move_to(double dx, double dy);

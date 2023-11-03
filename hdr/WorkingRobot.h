@@ -14,7 +14,7 @@ class WorkingRobot: public Robot {
                 CommanderRobot* commander): Robot(x, y, angle, name),
                 commander(commander){};
         virtual ~WorkingRobot(){};
-        void print() const;
+        //void print() const;
         CommanderRobot* get_commander() const;
         CommanderRobot* change_commander(CommanderRobot* com);
 };

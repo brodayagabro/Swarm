@@ -50,6 +50,10 @@ std::string Robot::get_name() const{
     return this->name;
 };
 
+void Robot::print() const{
+    std::cout <<"[ "<< this->name << " : ] | [ x = " << this->x 
+        << " ] | [ y = " << this->y << " ] | [ angle = " << this ->angle <<" ]" << std::endl;
+};
 
 bool Robot::move_to(double dx, double dy){
     if ((this->x+dx)>=0 && (this->y+dy)>=0){
