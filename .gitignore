@@ -1,0 +1,4 @@
+**/deps
+**/bin
+**/obj
+**/swarm_py/__pycache__
