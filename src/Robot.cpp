@@ -3,7 +3,7 @@
 #include "../hdr/Robot.h"
 //  в этом файле генерируются исключения из стандартной библиотеки
 Robot::Robot(double x, double y, double angle, std::string name)
-{// тут нужно прописать ошибки
+{
     if (x >=0 && y>= 0 && angle >=0 && angle <= 90){
         this->x = x;
         this->y = y;
@@ -21,8 +21,6 @@ Robot::Robot(double x, double y, double angle, std::string name)
 
 
 point* Robot::get_position() const{
-    //std::cout<<"x = "<<this->x<<std::endl;
-    //std::cout<<"y = "<<this->y<<std::endl;
     point *pos = (point*)malloc(sizeof(point));
     if ((x >= 0) || (y >= 0)){
         pos->x = this->x;
@@ -30,7 +28,6 @@ point* Robot::get_position() const{
         return pos;
     } else {
         throw std::range_error("Unexpectable format of x, y");
-        return NULL;
     }
 };
 

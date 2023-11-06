@@ -9,11 +9,11 @@ class CommanderRobot: public WorkingRobot{
     private:
         std::vector<WorkingRobot*> depens;
     public:
-        CommanderRobot(double x=0.0, double y=0.0, double angle = 0.0,
-                std::string name="", CommanderRobot* commander=NULL,
-                const std::vector<WorkingRobot*>& depens={});
+        CommanderRobot(double, double, double,
+                std::string, CommanderRobot*,
+                const std::vector<WorkingRobot*>&);
         virtual ~CommanderRobot(){};
-        virtual CommanderRobot* change_commander(CommanderRobot*);
+        CommanderRobot* change_commander(CommanderRobot*);
         void add_dep(WorkingRobot*);
         void erase_dep(WorkingRobot*);
         bool contains_dep(WorkingRobot*);

@@ -16,7 +16,7 @@ CommanderRobot* WorkingRobot::change_commander(CommanderRobot* new_com){
     if ((WorkingRobot*) new_com != this){
         this->commander = new_com;
     } else {
-        throw RecursiveException();
+        throw RecursiveException("Can't depends from this");
     }
     return new_com;
 };

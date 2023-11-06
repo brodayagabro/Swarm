@@ -12,8 +12,8 @@ class WorkingRobotTest: public ::testing::Test{
         CommanderRobot *CR1, *CR2;
 
         void SetUp(){
-            CR1 = new CommanderRobot(1.0, 1.0, 1.0, "C", nullptr);
-            CR2 = new CommanderRobot(1.0, 1.0, 1.0, "D", nullptr);
+            CR1 = new CommanderRobot(1.0, 1.0, 1.0, "C", nullptr, {});
+            CR2 = new CommanderRobot(1.0, 1.0, 1.0, "D", nullptr, {});
             WR1 = new WorkingRobot(1.0, 1.0, 1.0, "A", CR1);
             WR2 = new WorkingRobot(1.0, 1.0, 1.0, "B", CR2);
         };

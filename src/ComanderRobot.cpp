@@ -16,17 +16,10 @@ int cpy(std::vector<T>*V1, const std::vector<T>& V2){
 
 CommanderRobot::CommanderRobot(double x, double y, double angle,
         std::string name, CommanderRobot* commander,
-        const std::vector<WorkingRobot*>& depens):
+        const std::vector<WorkingRobot*>& depens={}):
     WorkingRobot(x, y, angle, name, commander){
     cpy(&this->depens, depens);
-    //std::cout << depens.size() << std::endl;
-    //for(int i = 0; i<(int)depens.size(); i++){
-      //  depens[i]->print();
-        //this->depens[i]->print();
-    //};
-};
-
-
+    };
 
 void CommanderRobot::add_dep(WorkingRobot *new_WR){
     this->depens.push_back(new_WR);
@@ -66,7 +59,7 @@ void CommanderRobot::move_dep_to(double dx, double dy, WorkingRobot* WR){
     if (this->contains_dep(WR)){
         WR->move_to(dx, dy);
     } else {
-        throw NotFountException();
+        throw NotFountException("");
     };
 }
 // вращение зависимого робота
@@ -76,21 +69,6 @@ void CommanderRobot::rotate_dep(double dangle, WorkingRobot* WR){
     } else {
         throw NotFountException();
     }
-}
-// смена командующего в WorkingRobot этот метод тоже реализован, нужно ли писать какие-либо 
-// клучевые слова для переопределения метода?
-CommanderRobot* CommanderRobot::change_commander(CommanderRobot *new_com){
-    bool not_in_depens = (std::find(this->depens.begin(),
-                this->depens.end(),
-                new_com) != this->depens.end());
-    bool not_me = (this->get_commander() != this);
-    
-    if (not_in_depens && not_me){
-       this->change_commander(new_com); 
-    } else {
-        throw RecursiveException();
-    }
-    return new_com;
 }
 
 // Вывод вектора с указателями на подчиненных роботов

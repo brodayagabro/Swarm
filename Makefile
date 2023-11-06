@@ -37,5 +37,8 @@ clean:
 	rm -vrf *.o $(OBJS)*.o
 	if [ -f $(TARGET) ]; then rm -v $(TARGET); fi;
 
-run:
+test:
 	./$(TARGET)
+
+console:
+	python3 ./swarm_py/user_console.py

@@ -1,4 +1,4 @@
-**/deps
-**/bin
-**/obj
-**/swarm_py/__pycache__
+/deps
+/bin
+/obj
+/swarm_py/__pycache__
