@@ -16,7 +16,7 @@ PREF_DEPS := ./deps/
 
 SRCS := $(wildcard $(PREF_SRC)*.cpp)
 OBJS := $(patsubst $(PREF_SRC)%.cpp, $(PREF_OBJ)%.o, $(SRCS))
-DEPS := $(patsubst $(PREF_SRC)%.cpp, $(PREF_DEPS)%.d, $(SRCS))
+#DEPS := $(patsubst $(PREF_SRC)%.cpp, $(PREF_DEPS)%.d, $(SRCS))
 
 #include $(DEPS)
 

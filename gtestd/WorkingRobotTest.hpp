@@ -22,7 +22,7 @@ class WorkingRobotTest: public ::testing::Test{
 };
 
 TEST_F(WorkingRobotTest, comparing_test){
-    //Assert
+   //Assert
     EXPECT_TRUE(*WR2 > *WR1);
     EXPECT_TRUE(*WR2 >= *WR1);
     EXPECT_TRUE(*WR1 < *WR2);

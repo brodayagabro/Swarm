@@ -49,4 +49,10 @@ TEST_F(CommanderRobotTest, erase_dep_test){
     CR2->erase_dep(WR1);
     ASSERT_FALSE(CR2->contains_dep(WR1));
 }
+
+TEST_F(CommanderRobotTest, change_commander_test){
+    CR1->change_commander(CR2);
+    //std::cout<<CR1->get_commander()->get_name()<<std::endl;
+    EXPECT_TRUE(CR1->get_commander() == CR2);
+}
 #endif

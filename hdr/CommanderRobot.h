@@ -13,7 +13,6 @@ class CommanderRobot: public WorkingRobot{
                 std::string, CommanderRobot*,
                 const std::vector<WorkingRobot*>&);
         virtual ~CommanderRobot(){};
-        CommanderRobot* change_commander(CommanderRobot*);
         void add_dep(WorkingRobot*);
         void erase_dep(WorkingRobot*);
         bool contains_dep(WorkingRobot*);

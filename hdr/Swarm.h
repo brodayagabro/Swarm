@@ -3,12 +3,24 @@
 
 #include "WorkingRobot.h"
 #include "CommanderRobot.h"
+#include <memory>
 #include <vector>
+
+
+struct Tnode{
+    WorkingRobot* node;
+    std::vector<Tnode*> childs;
+};
+
+
+
 class Swarm{
-    private:
+    public:
         std::vector<WorkingRobot*> robots;
     public:
-        Swarm(){};
+        Swarm(const std::vector<WorkingRobot*>);
+        std::vector<WorkingRobot*> get_robots();
+        void change_commander(WorkingRobot*, CommanderRobot*);
 };
 
 
