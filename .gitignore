@@ -1,5 +1,6 @@
 /deps
 /bin
-/obj
+/obj/*
+/src/.ipynb_checkpoints
 /swarm_py/__pycache__
 
