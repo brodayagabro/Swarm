@@ -6,6 +6,8 @@
 #include <memory>
 #include <stdexcept>
 #include "../hdr/Swarm.h"
+
+
 // параметр comparent для функции сортиовки 
 bool CmpByName(WorkingRobot *R1, WorkingRobot *R2){
     return R1->get_name() < R2->get_name();
@@ -23,7 +25,7 @@ std::vector<T> create_copy(std::vector<T> const &vec)
 Swarm::Swarm(const std::vector<WorkingRobot*> robots){
     this->robots = create_copy(robots);
     std::sort(this->robots.begin(), this->robots.end(), CmpByName); 
-    //std::copy(robots.begin(), robots.end(), back_inserter(this->robots));
+    this->curent_time = 0;
 };
 
 // Метод для получения Списка Роботов в Рое
@@ -32,9 +34,48 @@ std::vector<WorkingRobot*> Swarm::get_robots(){
     return robots;
 }
 
+// Проверка наличия Робота в рое
+bool Swarm::is_included(WorkingRobot* R){ 
+    auto it = std::find(this->robots.begin(), this->robots.end(), R);
+    if (it == this->robots.end()){
+        return false;
+    }
+    return true;
+}
+
+// добавление робота в рой
+int Swarm::add_robot(WorkingRobot* R){
+    if (!this->is_included(R)){
+        this->robots.push_back(R);
+        return 0; // succefully include
+    }
+    else{
+        return 1; // already include
+    }
+}
+
+
+// функция выключения робота из Роя
+int Swarm::exclude_robot(WorkingRobot* R){
+    if (this->is_included(R)){
+        auto it = std::find(this->robots.begin(), this->robots.end(), R);
+        this->robots.erase(it);
+        delete R;
+        return 0;  
+    }
+    return 1;
+}
+
+// получение текущего времени симуляции
+int Swarm::get_time() const{
+    return this->curent_time;
+}
+
 // Метод изменения зависимостей роботов Роя
 void Swarm::change_commander(WorkingRobot* WR, CommanderRobot* CR){
-    // нужно реализовать проверку наличия робота в Рое
+    //if (!this->is_included(WR) or !this->is_included((WorkingRobot*)CR)){
+    //    throw std::runtime_error("Unknown robots! Include these in swarm...");
+    //}
     // проверим не является ли этот робот уже подчиенным 
     //std::printf("yes1\n");
     if ((WR->get_commander() != CR) and !(CR->contains_dep(WR))){

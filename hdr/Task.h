@@ -58,11 +58,25 @@ district<T>::~district(){};
 
 class Task{
     std::string task_name;
+    int time;
+    int count_of_robots;
     CommanderRobot* LiableCommander;
     district <float>* feild;
 
     public:
-        Task(std::string, CommanderRobot*, district <float>*); 
+        // Constructor
+        Task(std::string, CommanderRobot*, district <float>*, int time,
+                int count_of_robots);
+        ~Task();
+        // Methods to get status of private variables
+        std::string get_name()const;
+        int get_time()const;
+        int get_countR()const;
+        CommanderRobot* get_liable()const;
+        district<float>* get_feild()const;
+        // Method to get status of Robots in the task
+
+
 
 };
 
