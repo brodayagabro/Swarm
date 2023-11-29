@@ -45,8 +45,10 @@ bool Swarm::is_included(WorkingRobot* R){
 
 // добавление робота в рой
 int Swarm::add_robot(WorkingRobot* R){
+
     if (!this->is_included(R)){
         this->robots.push_back(R);
+        std::sort(this->robots.begin(), this->robots.end(), CmpByName);
         return 0; // succefully include
     }
     else{
@@ -64,11 +66,6 @@ int Swarm::exclude_robot(WorkingRobot* R){
         return 0;  
     }
     return 1;
-}
-
-// получение текущего времени симуляции
-int Swarm::get_time() const{
-    return this->curent_time;
 }
 
 // Метод изменения зависимостей роботов Роя

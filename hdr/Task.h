@@ -58,7 +58,7 @@ district<T>::~district(){};
 
 class Task{
     std::string task_name;
-    int time;
+    int time; int curr_time;
     int count_of_robots;
     CommanderRobot* LiableCommander;
     district <float>* feild;

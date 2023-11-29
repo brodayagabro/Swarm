@@ -28,6 +28,8 @@ Task::Task(std::string name, CommanderRobot* LiableCommander, district<float>* f
         throw std::runtime_error("Incorrect feild");
     }
     this->feild = feild;
+
+    this->curr_time = 0;
 };
 
 Task::~Task(){

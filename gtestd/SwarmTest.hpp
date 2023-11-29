@@ -16,7 +16,7 @@ class SwarmTest: public ::testing::Test{
         Swarm* swarm;
         void SetUp(){
             robots = {new WorkingRobot(1, 2, 3, "A", NULL),
-                        new CommanderRobot(1, 2, 4, "B", NULL, {})};
+                        new CommanderRobot(1, 2, 4, "C", NULL, {})};
             swarm = new Swarm(robots);
         };
         void TearDown(){
@@ -45,6 +45,19 @@ TEST_F(SwarmTest, get_robots_test){
     EXPECT_TRUE(swarm->get_robots().size() == 2);
 
 }
+
+TEST_F(SwarmTest, add_robot_test){
+    WorkingRobot* R = new WorkingRobot(1.0, 3.0, 40.0, "B", NULL);
+    swarm->add_robot(R);
+    ASSERT_TRUE(swarm->is_included(R));
+}
+
+TEST_F(SwarmTest, exclude_robot_test){
+    swarm->exclude_robot(robots[0]);
+    ASSERT_FALSE(swarm->is_included(robots[0]));
+    ASSERT_TRUE(swarm->exclude_robot(nullptr) == 1);
+}
+
 
 TEST_F(SwarmTest, change_commander_test1){
     
