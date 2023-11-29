@@ -32,7 +32,13 @@ TEST(SwarmTest1, Swarm_Swarm_Test){
         new WorkingRobot(1, 2, 4, "B", NULL)
     };
     Swarm *swarm = new Swarm(robots);
-    EXPECT_TRUE(swarm->robots.size() == 2);
+    EXPECT_TRUE(swarm->get_robots().size() == 2);
+}
+
+TEST_F(SwarmTest, is_included_test){
+    ASSERT_TRUE(swarm->is_included(robots[1]));
+    ASSERT_TRUE(swarm->is_included(robots[0]));
+
 }
 
 TEST_F(SwarmTest, get_robots_test){

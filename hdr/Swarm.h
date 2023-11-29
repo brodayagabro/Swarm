@@ -7,20 +7,19 @@
 #include <vector>
 
 
-struct Tnode{
-    WorkingRobot* node;
-    std::vector<Tnode*> childs;
-};
-
-
 
 class Swarm{
-    public:
+    private:
         std::vector<WorkingRobot*> robots;
+        int curent_time;
     public:
         Swarm(const std::vector<WorkingRobot*>);
         std::vector<WorkingRobot*> get_robots();
         void change_commander(WorkingRobot*, CommanderRobot*);
+        bool is_included(WorkingRobot*);
+        int add_robot(WorkingRobot*);
+        int exclude_robot(WorkingRobot*);
+        int get_time()const;
 };
 
 
