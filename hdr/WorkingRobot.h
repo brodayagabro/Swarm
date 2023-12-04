@@ -13,6 +13,8 @@ class WorkingRobot: public Robot {
         WorkingRobot(double x, double y, double angle, std::string name,
                 CommanderRobot* commander): Robot(x, y, angle, name),
                 commander(commander){};
+        // Конструктор копирования по указателю
+        WorkingRobot& operator=(const WorkingRobot&)=default;
         virtual ~WorkingRobot(){};
         //void print() const;
         CommanderRobot* get_commander() const;

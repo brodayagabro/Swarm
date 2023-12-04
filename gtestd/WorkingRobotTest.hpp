@@ -55,4 +55,13 @@ TEST_F(WorkingRobotTest, change_commander_test){
         WR1->change_commander((CommanderRobot*)WR1);
     }, RecursiveException);
 }
+
+TEST_F(WorkingRobotTest, copy_constructor_test){
+    auto WR = new WorkingRobot(*WR1);
+    ASSERT_TRUE(WR->get_x() == WR1->get_x());
+    ASSERT_TRUE(WR->get_y() == WR1->get_y());
+    ASSERT_TRUE(WR->get_angle() == WR1->get_angle());
+    ASSERT_TRUE(WR->get_name() == WR->get_name());
+    ASSERT_FALSE(WR == WR1);
+}
 #endif

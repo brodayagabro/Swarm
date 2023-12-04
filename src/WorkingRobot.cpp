@@ -20,7 +20,7 @@ CommanderRobot* WorkingRobot::change_commander(CommanderRobot* new_com){
     }
     return new_com;
 };
- 
+
 CommanderRobot* WorkingRobot::get_commander()const{
     return this->commander;
 };

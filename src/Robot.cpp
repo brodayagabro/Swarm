@@ -22,6 +22,7 @@ Robot::Robot(double x, double y, double angle, std::string name)
 
 point* Robot::get_position() const{
     point *pos = (point*)malloc(sizeof(point));
+    // Fix to &&
     if ((x >= 0) || (y >= 0)){
         pos->x = this->x;
         pos->y = this->y;
