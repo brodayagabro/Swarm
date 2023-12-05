@@ -9,6 +9,12 @@
 #include "../hdr/CommanderRobot.h"
 #include "../hdr/Swarm.h"
 
+#ifdef DEBUG
+#define DEBUG_PRINT(...) fprintf(stderr, __VA_ARGS__)
+#else
+#define DEBUG_PRINT(...)
+#endif
+
 class SwarmTest: public ::testing::Test{
     public:
         std::vector<WorkingRobot*> robots;
@@ -16,30 +22,28 @@ class SwarmTest: public ::testing::Test{
         CommanderRobot *CR;
         void SetUp(){
             CR = new CommanderRobot(1, 2, 3, "CR2", nullptr, {});
-            
-            // CommanderRobot*R1 = new CommanderRobot(1, 2, 3, "R1", nullptr, {});
-            // CommanderRobot*R2 = new CommanderRobot(1, 2, 4, "R2", nullptr, {}); 
-            // CommanderRobot*R3 = new CommanderRobot(1, 2, 3, "R3", nullptr, {});
-            // CommanderRobot*R4 = new CommanderRobot(1, 2, 3, "R4", nullptr, {});
+            CommanderRobot*R1 = new CommanderRobot(1, 2, 3, "R1", nullptr, {});
+            CommanderRobot*R2 = new CommanderRobot(1, 2, 4, "R2", nullptr, {}); 
+            CommanderRobot*R3 = new CommanderRobot(1, 2, 3, "R3", nullptr, {});
+            CommanderRobot*R4 = new CommanderRobot(1, 2, 3, "R4", nullptr, {});
             CommanderRobot*R5 = new CommanderRobot(1, 2, 3, "R5", CR, {});    
             CommanderRobot*R6 = new CommanderRobot(1, 2, 4, "R6", nullptr, {}); 
-            // CommanderRobot*R7 = new CommanderRobot(1, 2, 3, "R7", nullptr, {});
-            /*
-            R2->change_commander(nullptr);
+            CommanderRobot*R7 = new CommanderRobot(1, 2, 3, "R7", nullptr, {});
+            
+            R2->change_commander(R1);
             R3->change_commander(R1);
-            */
-            //R1->add_dep((WorkingRobot*)R2); R1->add_dep((WorkingRobot*)R3);
-            //R4->change_commander(R2);
-            //R5->change_commander(R2);
-            //R2->add_dep((WorkingRobot*)R4); R2->add_dep((WorkingRobot*)R5);
-            //R6->change_commander(R3);
-            //R7->change_commander(R3);
-            //R3->add_dep((WorkingRobot*)R6);
-            //R3->add_dep((WorkingRobot*)R7);
+            R1->add_dep((WorkingRobot*)R2); R1->add_dep((WorkingRobot*)R3);
+            R4->change_commander(R2);
+            R5->change_commander(R2);
+            R2->add_dep((WorkingRobot*)R4); R2->add_dep((WorkingRobot*)R5);
+            R6->change_commander(R3);
+            R7->change_commander(R3);
+            R3->add_dep((WorkingRobot*)R6);
+            R3->add_dep((WorkingRobot*)R7);
             //R1->change_commander(R7);            
             //R7->add_dep((WorkingRobot*)R1);
             
-            robots = {R5, R6};
+            robots = {R1, R2, R3, R4, R5, R6, R7};
 
             swarm = new Swarm(robots);
         };
@@ -50,25 +54,25 @@ class SwarmTest: public ::testing::Test{
         }
 };
 
-//TEST(SwarmTest1, Swarm_Swarm_Test){
- //   std::vector<WorkingRobot*> robots = {
-  //      new WorkingRobot(1, 2, 3, "A", NULL),
- //       new WorkingRobot(1, 2, 4, "B", NULL)
- ////   };
-   // Swarm *swarm = new Swarm(robots);
-   // EXPECT_TRUE(swarm->get_robots().size() == 2);
-//}
+TEST(SwarmTest1, Swarm_Swarm_Test){
+   std::vector<WorkingRobot*> robots = {
+        new WorkingRobot(1, 2, 3, "A", NULL),
+        new WorkingRobot(1, 2, 4, "B", NULL)
+      };
+    Swarm *swarm = new Swarm(robots);
+    EXPECT_TRUE(swarm->get_robots().size() == 2);
+}
 
-//TEST_F(SwarmTest, is_included_test){
- //   //printf("%d\n", 0);
-  //  EXPECT_TRUE(swarm->is_included(robots[0]));
+TEST_F(SwarmTest, is_included_test){
+   //printf("%d\n", 0);
+    EXPECT_TRUE(swarm->is_included(robots[0]));
     //printf("%d\n", 1);
-//    EXPECT_TRUE(swarm->is_included(robots[1]));
-//    //printf("%d\n", 2);
-//    EXPECT_FALSE(swarm->is_included((WorkingRobot*)CR));
-//    //printf("%d\n", 3);
-//}
-/*
+    EXPECT_TRUE(swarm->is_included(robots[1]));
+    //printf("%d\n", 2);
+    EXPECT_FALSE(swarm->is_included((WorkingRobot*)CR));
+    //printf("%d\n", 3);
+}
+
 TEST_F(SwarmTest, get_robots_test){
     EXPECT_TRUE(swarm->get_robots().size() == 7);
 
@@ -105,29 +109,33 @@ TEST_F(SwarmTest, change_commander_test3){
     robots[1]->change_commander(CR);
     EXPECT_THROW(swarm->change_commander(robots[1], CR), std::runtime_error);
 }
-*/
+
 TEST_F(SwarmTest, change_commander_test4){
     // Test4
     //dynamic_cast<CommanderRobot*>(robots[5])->add_dep(robots[2]);
     //robots[2]->change_commander((CommanderRobot*)robots[2]);
     //std::cout<<robots[6]->get_name()<<std::endl;
-    swarm->get_robots()[0]->change_commander(nullptr);
-    swarm->get_robots()[1]->change_commander((CommanderRobot*)robots[0]);
-    EXPECT_THROW(swarm->change_commander(robots[0], (CommanderRobot*)robots[1]), RecursiveException);
+    //swarm->get_robots()[0]->change_commander(nullptr);
+    //swarm->get_robots()[1]->change_commander((CommanderRobot*)robots[0]);
+    EXPECT_THROW(swarm->change_commander(robots[0], (CommanderRobot*)robots[6]), RecursiveException);
 }
-/*
+
 TEST_F(SwarmTest, change_commander_test5){
     // Test5
-    swarm->change_commander(robots[0], CR);
-    EXPECT_TRUE(robots[0]->get_commander() == CR);
-    EXPECT_TRUE(CR->contains_dep(robots[0]));
+    DEBUG_PRINT("Change CommanderRobot of R2");
+    swarm->change_commander(robots[1], (CommanderRobot*)robots[2]);
+    EXPECT_TRUE(robots[1]->get_commander() == robots[2]);
+    EXPECT_TRUE(robots[1]->get_commander() == (CommanderRobot*)robots[2]);
 }
 
 TEST_F(SwarmTest, change_commander_test6){
     // Test6
+    DEBUG_PRINT("Change CR2 CommanderRobot");    
     CR->change_commander((CommanderRobot*)robots[1]);
+    DEBUG_PRINT("Cast robot[1]");
     dynamic_cast<CommanderRobot*>(robots[1])->add_dep(CR);
-    EXPECT_THROW(swarm->change_commander(robots[1], CR), RecursiveException);
+    ASSERT_FALSE(swarm->is_included((WorkingRobot*)CR));
+    EXPECT_THROW(swarm->change_commander(robots[1], CR), std::runtime_error);
 }
-*/
+
 #endif

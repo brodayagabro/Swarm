@@ -1,35 +1,22 @@
 #include "../hdr/Swarm.h"
 #include <algorithm>
+#include <utility>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
 #include "../hdr/Swarm.h"
+#define DEBUG
 
 #ifdef DEBUG
 #define DEBUG_PRINT(...) fprintf(stderr, __VA_ARGS__)
 #else
 #define DEBUG_PRINT(...)
 #endif
-
-
-#define DEBUG
-// class describes dependence tree of the swarm
-struct commanders{
-    std::vector<CommanderRobot*> commanders;
-};
 // параметр comparent для функции сортиовки 
 bool CmpByName(WorkingRobot *R1, WorkingRobot *R2){
     return R1->get_name() < R2->get_name();
-}
-
-// Шаблон копирования вектора, не думаю, что он особо нужен
-template<typename T>
-std::vector<T> create_copy(std::vector<T> const &vec)
-{
-    std::vector<T> v(vec);
-    return v;
 }
 
 // Конструктор Класса Рой 
@@ -55,7 +42,6 @@ bool Swarm::is_included(WorkingRobot* R){
 
 // добавление робота в рой
 int Swarm::add_robot(WorkingRobot* R){
-
     if (!this->is_included(R)){
         this->robots.push_back(R);
         std::sort(this->robots.begin(), this->robots.end(), CmpByName);
@@ -79,196 +65,216 @@ int Swarm::exclude_robot(WorkingRobot* R){
 }
 
 // Метод изменения зависимостей роботов Роя
+typedef std::pair<WorkingRobot*, CommanderRobot*> CRWR;
+typedef std::vector<CRWR> PAIRS;
+void print_pairs(const PAIRS &VR){
+    for (auto it = VR.begin(); it != VR.end(); ++it){
+        if ((*it).second != nullptr){
+            std::cout << (*it).first->get_name() << ":";
+            std::cout << (*it).second->get_name() << std::endl;
+        }else{    
+            std::cout << (*it).first->get_name()
+                << ":nullptr" <<std::endl;
+        }
+    }
+}
+
+template<class T>
+void print_robots(const std::vector<T*> &ROBOTS){
+    std::cout << " [ ";
+    for (auto it = ROBOTS.begin(); it != ROBOTS.end(); ++it){
+        if ((*it) != nullptr){
+           std::cout << (*it)->get_name() << " ";
+        }
+        else{
+            std::cout << "nullptr" << " ";
+        }
+    }
+    std::cout<<"] "<<std::endl;
+}
+
+PAIRS create_pairs(const std::vector<WorkingRobot*> &ROBOTS){
+#ifdef DEBUG
+    print_robots(ROBOTS);
+#endif
+    PAIRS VR{};
+    CRWR p;
+    DEBUG_PRINT("define pairs\n");
+    for (auto it = ROBOTS.begin(); it!=ROBOTS.end(); ++it){ 
+    // Такое копирование вызывает разрыв связи между роботами
+    //  и нельязя пользоваться методами get_commander и get_deps!!!
+        auto R = new WorkingRobot(*(*it));
+        CommanderRobot* C;
+        if (R->get_commander() != nullptr){
+            C = new CommanderRobot(*(*it)->get_commander());
+        } else{
+            continue;
+            //C = nullptr;
+        }
+        p = std::make_pair(R, C);    
+        VR.push_back(p);
+    }
+
+#ifdef DEBUG
+    fprintf(stderr, "pairs after initilazing:\n");
+    print_pairs(VR);
+#endif
+    return VR;
+};
+
+typedef std::pair<WorkingRobot*, std::vector<CommanderRobot*>> ALL_COMS;
+typedef std::vector<ALL_COMS> DEPENDENCES;
+void print_dependences(const DEPENDENCES &dependences){
+    for (auto it = dependences.begin(); it != dependences.end(); ++it){
+        auto dep = *it;
+        std::cout << dep.first->get_name() << " : [ ";
+        for (auto C = dep.second.begin(); C != dep.second.end(); ++C){
+            if ((*C) != nullptr)
+                std::cout << (*C)->get_name() << " ";
+            else
+                std::cout <<"nullptr";
+        } 
+        std::cout << "] " << std::endl;
+    }
+}
+
+DEPENDENCES create_dependences(PAIRS pairs){
+    DEPENDENCES dependences {};
+    //dependences.clear();
+    std::pair<WorkingRobot*, std::vector<CommanderRobot*>> dep;
+    // инициализация развертки графа зависимотей
+    DEBUG_PRINT("Declarate dependences\n");
+    for (auto it = pairs.begin(); it != pairs.end(); ++it){
+        DEBUG_PRINT("Start init R\n");
+        auto R = (*it).first;           
+#ifdef DEBUG
+        std::cout << R->get_name() << std::endl;
+        if ((*it).second == nullptr){
+            printf("CommanderRobot is nullptr");
+        }
+        printf("Start init C\n");
+#endif          
+        CommanderRobot* C;
+        C = (*it).second;
+        DEBUG_PRINT("Start create a new dep\n");
+        std::vector<CommanderRobot*> vc {C};
+        dep = std::make_pair(R, vc);
+        DEBUG_PRINT("Succes of creation dep\n");
+        dependences.push_back(dep);
+        DEBUG_PRINT("______________________\n");
+    }
+#ifdef DEBUG        
+        print_dependences(dependences);
+#endif
+    return dependences;    
+}
+
+bool Update_dependences(ALL_COMS &dep, const PAIRS &pairs){
+    bool was_updated = false;
+    auto comanders = dep.second;// список Комантиров для робота
+    DEBUG_PRINT("|len = %d |", (int)dep.second.size());
+    WorkingRobot* R;
+    for (auto C = comanders.begin(); C != comanders.end(); ++ C){
+        if ((*C) != nullptr){
+            R = (WorkingRobot*)(*C);
+        } else{
+#ifndef DEBUG            
+            continue;
+#else
+            continue;
+#endif
+        }// Этого робота будем искать в списке зависимостей
+        // Поиск пары по ключу
+        auto pair = std::find_if(pairs.begin(), pairs.end(), 
+                [R](auto& el){if ((el.first) == nullptr) return false; 
+                              else return *(el.first) == *R; });
+        // Если пара нашлась
+        if (pair != pairs.end()){        
+            DEBUG_PRINT("[ Pair was found ]");
+            // Проверим наличие командира в списке командиров для робота
+            auto comander = (*pair).second;
+            //std::cout << comander->get_name();
+            auto it = std::find_if(comanders.begin(), comanders.end(),
+                    [comander](auto& el){
+                    if (el == nullptr || comander == nullptr)
+                        return false;
+                    else
+                        return *(el) == *comander;
+                     });
+            if (it == comanders.end() && (comander != nullptr)){
+               DEBUG_PRINT("[ comander was found ]");
+                // Если его там нет, то добавим его в список
+                dep.second.push_back(comander);
+                was_updated = true;
+            }    
+        }
+        DEBUG_PRINT("\n");
+    }
+   return was_updated;
+}
 
 void Swarm::change_commander(WorkingRobot* WR, CommanderRobot* CR){
-#ifdef DEBUG
-    printf("start changing\n");
-#endif
-    if (!this->is_included(WR) or !this->is_included((WorkingRobot*)CR)){
-        throw std::runtime_error("Unknown robots! Include these in swarm...");
-    }
+    DEBUG_PRINT("start changing\n");
+    if (!this->is_included(WR) ||
+            !this->is_included((WorkingRobot*)CR)){
+        throw std::runtime_error
+            ("Unknown robots! Include these in swarm...");
+    }else {DEBUG_PRINT("CR and WR are in swarm\n");}
     // проверим не является ли этот робот уже подчиенным 
-#ifdef DEBUG
-    std::printf("CR and WR are in swarm\n");
-#endif
-    if ((WR->get_commander() != CR) and !(CR->contains_dep(WR))){
+   
+    if ((WR->get_commander() != CR) && !(CR->contains_dep(WR))){
         // Построение "развертки графа" зависимостей и поиск циклов
-    #ifdef DEBUG
-        std::cout << "define pairs" << std::endl;
-    #endif
-        std::vector<std::pair<WorkingRobot*, CommanderRobot*>*> pairs{};
-        //pairs.clear();
-#ifdef DEBUG
-        std::cout << "define p" << std::endl;
-#endif
-        std::pair<WorkingRobot*, CommanderRobot*>* p;
-#ifdef DEBUG
-printf("robots in swarm: \n");
-        for (auto it = this->robots.begin(); it != this->robots.end(); ++it){
-            std::cout << (*it)->get_name() << std::endl;
-        }
-        printf("declarate pairs\n");
-#endif
-        // Пары робот -> командир
-        for (auto it = this->robots.begin(); it!=this->robots.end(); ++it){
-            
-            // Такое копирование вызывает разрыв связи между роботами и нельязя пользоваться методами get_commander и get_deps!!!
-            auto R = new WorkingRobot(*(*it));
-#ifdef DEBUG
-            std::cout << R->get_name()<< "\n:: pointer of copy comander ::" << R->get_commander() << std::endl;
-            std::cout<<":: pointer of origin comander::"<<(*it)->get_commander()<<std::endl;
-#endif      
-            CommanderRobot* C;
-            if (R->get_commander() != nullptr){
-                C = new CommanderRobot(*(*it)->get_commander());
-            } else{
-                C = nullptr;
-            }
-            p = new std::pair<WorkingRobot*, CommanderRobot*>(R, C);    
-            pairs.push_back(p);
-        }
-#ifdef DEBUG
-        std::cout << "pairs after initilazing:" << std::endl;
-        for (auto it = pairs.begin(); it != pairs.end(); ++it){
-            if ((*it)->second != nullptr){
-                std::cout << (*it)->first->get_name() << ":";
-                std::cout << (*it)->second->get_name() << std::endl;
-            }else{    
-                std::cout << (*it)->first->get_name() << ":nullptr" <<std::endl;
-            }
-        }
-#endif
+        auto old_comander = WR->get_commander();
+        WR->change_commander(CR);
+        CR->add_dep(WR);
+        DEBUG_PRINT("define pairs\n");
+        std::vector<std::pair<WorkingRobot*, CommanderRobot*>>
+            pairs(create_pairs(robots));
+// ---------------------------------------------------------------------
         // Робот : командиры
         // Лучше было использовать map наверное...
-#ifdef DEBUG
-    printf("Init dependences\n");
-#endif
-        std::vector<std::pair<WorkingRobot*, std::vector<CommanderRobot*>>*> dependences{};
-        //dependences.clear();
-        std::pair<WorkingRobot*, std::vector<CommanderRobot*>>* dep;
-        // инициализация развертки графа зависимотей
-#ifdef DEBUG
-        std::cout << "Declarate dependences" <<std::endl;
-#endif
-        for (auto it = pairs.begin(); it != pairs.end(); ++it){
-#ifdef DEBUG
-            if ((*it)==nullptr){
-                printf("%i nullptr", __LINE__);
-            }
-            printf("Start init R\n");
-#endif
-            auto R = (*it)->first;           
-#ifdef DEBUG
-            std::cout << R->get_name() << std::endl;
-            if ((*it)->second == nullptr){
-                printf("CommanderRobot is nullptr");
-            }
-            printf("Start init C\n");
-    
-#endif  
-            CommanderRobot* C;
-            if (*it == nullptr){
-                C = nullptr;
-            } else {
-                C = (*it)->second;
-            }
-#ifdef DEBUG
-            printf("Start create a new dep\n");
-#endif
-            //std::vector<CommanderRobot*> vc {C};
-            dep = new std::pair<WorkingRobot*, std::vector<CommanderRobot*>>(R, {C});
-#ifdef DEBUG
-    printf("Succes of creation dep\n");
-#endif
-            dependences.push_back(dep);
-#ifdef DEBUG
-            printf("______________________");
-            //std::cout << dep->first->get_name() << " : [ " << dep->second[0]->get_name() << " ]" << std::endl;
-#endif
-        }
-#ifdef DEBUG        
-        for (auto it = dependences.begin(); it != dependences.end(); ++it){
-            auto dep = *it;
-            std::cout << dep->first->get_name() << " : [ ";
-            for (auto C = dep->second.begin(); C != dep->second.end(); ++C){
-                if ((*C) != nullptr){
-                    std::cout << (*C)->get_name() << " ";
-                } else{ std::cout <<"nullptr"; }
-            } 
-            std::cout << "] " << std::endl;
-        }
-#endif
+        DEBUG_PRINT("Init dependences\n");
+        DEPENDENCES dependences(create_dependences(pairs));
           
         bool changed_deps = true; 
         while (changed_deps){
             changed_deps = false;
             for (auto dep = dependences.begin(); dep != dependences.end(); ++dep){
-                auto comanders = (*dep)->second;// список Комантиров для робота
+                DEBUG_PRINT("COME IN LOOP\n");
+                changed_deps = Update_dependences((*dep), pairs);
+                DEBUG_PRINT("DEPENDENCES was changed = %d\n", (int)changed_deps);
+                auto comanders=(*dep).second;
 #ifdef DEBUG
-                printf("|len = %d |", (int)comanders.size());
+                print_robots(comanders);
 #endif
-                WorkingRobot* R;
-                for (auto C = comanders.begin(); C != comanders.end(); ++ C){
-                    if ((*C) != nullptr){
-                    R = (WorkingRobot*)(*C);
-                    } else{
-                        continue;
-                    }// Этого робота будем искать в списке зависимостей
-#ifdef DEBUG
-                    std::cout <<R->get_name();
-#endif
-                    // Поиск пары по ключу
-                    auto pair = std::find_if(pairs.begin(), pairs.end(), [R](auto& el){ return *(el->first) == *R; });
-                    // Если пара нашлась
-                    if (pair != pairs.end()){
-                    #ifdef DEBUG
-                        printf(" <1> ");
-                    #endif
-                        // Проверим наличие командира в списке командиров для робота
-                        auto comander = (*pair)->second;
-                        //std::cout << comander->get_name();
-                        auto it = std::find_if(comanders.begin(), comanders.end(), [comander](auto& el){ if (el == nullptr || comander == nullptr) return false; else return *(el) == *comander;});
-                        if (it == comanders.end()){
-                    #ifdef DEBUG 
-                           printf(" <2> ");
-                    #endif
-                            // Если его там нет, то добавим его в список
-                            (*dep)->second.push_back(comander);
-                            changed_deps = true;
-                        }    
-                    }
-                #ifdef DEBUG
-                    std::cout << std::endl;
-                #endif
-                }
-                //std::cout<< "Robot" << (*dep)->first->get_name()<<std::endl;
-                comanders=(*dep)->second;
-                auto Robot=(CommanderRobot*)((*dep)->first);
-                auto is_in_comanders = std::find_if(comanders.begin(), comanders.end(), [Robot](auto& el){ if (el == nullptr) return false; else return *(el) == *Robot;});
+                auto Robot=(CommanderRobot*)((*dep).first);
+                auto is_in_comanders = std::find_if(comanders.begin(),
+                        comanders.end(),
+                        [Robot](auto& el){
+                            if (el == nullptr)
+                                return false;
+                            else    
+                                return *(el) == *Robot;});
+
                 if (is_in_comanders != comanders.end()){
+                    WR->change_commander(old_comander);
+                    CR->erase_dep(WR);
+                    DEBUG_PRINT("---->LOOP IN TREE<----\n");
                     throw RecursiveException("Loop was find...");
                 };    
             }
-         #ifdef DEBUG
-            std::cout << "Updated dependences" << std::endl; 
-            for (auto it = dependences.begin(); it != dependences.end(); ++it){
-                auto dep = *it;
-                std::cout << dep->first->get_name() << " : [ ";
-                for (auto C = dep->second.begin(); C != dep->second.end(); ++C){
-                    if (*C != nullptr)
-                    std::cout << (*C)->get_name() << " ";
-                } 
-                std::cout << "] " << std::endl;
-            }
-        #endif
-            WR->change_commander(CR);
-            CR->add_dep(WR);
-            dependences.clear();
-            pairs.clear();
+#ifdef DEBUG
+            std::cout << "Last Updated dependences" << std::endl; 
+            print_pairs(pairs);
+            DEBUG_PRINT("*************************\n");
+            print_dependences(dependences);
+#endif
         }
-    } else {
+        dependences.clear();
+        pairs.clear();
+        DEBUG_PRINT("Succesfelly changed...\n");
+    } else 
         throw std::runtime_error("already in depends");
-   }
 
 }
 

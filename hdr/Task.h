@@ -65,7 +65,9 @@ class Task{
 
     public:
         // Constructor
-        Task(std::string, CommanderRobot*, district <float>*, int time,
+        Task(const std::string&,
+                CommanderRobot*,
+                district <float>*, int time,
                 int count_of_robots);
         ~Task();
         // Methods to get status of private variables

@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <exception>
 #include "../hdr/exceptions.h"
-Task::Task(std::string name, CommanderRobot* LiableCommander, district<float>* feild, int time, int count_of_robots){
+Task::Task(const std::string &name, CommanderRobot* LiableCommander, district<float>* feild, int time, int count_of_robots){
     if (name==""){
        throw  std::range_error("Name can't be null len!");
     }

@@ -15,7 +15,7 @@ int cpy(std::vector<T>*V1, const std::vector<T>& V2){
 }
 
 CommanderRobot::CommanderRobot(double x, double y, double angle,
-        std::string name, CommanderRobot* commander,
+        const std::string &name, CommanderRobot* commander,
         const std::vector<WorkingRobot*>& depens={}):
     WorkingRobot(x, y, angle, name, commander){
     cpy(&this->depens, depens);

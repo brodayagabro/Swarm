@@ -10,7 +10,7 @@ class WorkingRobot: public Robot {
     protected:
         CommanderRobot* commander;    
     public:
-        WorkingRobot(double x, double y, double angle, std::string name,
+        WorkingRobot(double x, double y, double angle,const std::string &name,
                 CommanderRobot* commander): Robot(x, y, angle, name),
                 commander(commander){};
         // Конструктор копирования по указателю
