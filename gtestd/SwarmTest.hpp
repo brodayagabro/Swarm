@@ -122,7 +122,7 @@ TEST_F(SwarmTest, change_commander_test4){
 
 TEST_F(SwarmTest, change_commander_test5){
     // Test5
-    DEBUG_PRINT("Change CommanderRobot of R2");
+    //DEBUG_PRINT("Change CommanderRobot of R2\n");
     swarm->change_commander(robots[1], (CommanderRobot*)robots[2]);
     EXPECT_TRUE(robots[1]->get_commander() == robots[2]);
     EXPECT_TRUE(robots[1]->get_commander() == (CommanderRobot*)robots[2]);
@@ -130,9 +130,9 @@ TEST_F(SwarmTest, change_commander_test5){
 
 TEST_F(SwarmTest, change_commander_test6){
     // Test6
-    DEBUG_PRINT("Change CR2 CommanderRobot");    
+    //DEBUG_PRINT("Change CR2 CommanderRobot\n");    
     CR->change_commander((CommanderRobot*)robots[1]);
-    DEBUG_PRINT("Cast robot[1]");
+    //DEBUG_PRINT("Cast robot[1]\n");
     dynamic_cast<CommanderRobot*>(robots[1])->add_dep(CR);
     ASSERT_FALSE(swarm->is_included((WorkingRobot*)CR));
     EXPECT_THROW(swarm->change_commander(robots[1], CR), std::runtime_error);

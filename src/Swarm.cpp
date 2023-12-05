@@ -7,7 +7,6 @@
 #include <memory>
 #include <stdexcept>
 #include "../hdr/Swarm.h"
-#define DEBUG
 
 #ifdef DEBUG
 #define DEBUG_PRINT(...) fprintf(stderr, __VA_ARGS__)
@@ -64,9 +63,11 @@ int Swarm::exclude_robot(WorkingRobot* R){
     return 1;
 }
 
+
 // Метод изменения зависимостей роботов Роя
 typedef std::pair<WorkingRobot*, CommanderRobot*> CRWR;
 typedef std::vector<CRWR> PAIRS;
+#ifdef DEBUG
 void print_pairs(const PAIRS &VR){
     for (auto it = VR.begin(); it != VR.end(); ++it){
         if ((*it).second != nullptr){
@@ -92,6 +93,7 @@ void print_robots(const std::vector<T*> &ROBOTS){
     }
     std::cout<<"] "<<std::endl;
 }
+#endif
 
 PAIRS create_pairs(const std::vector<WorkingRobot*> &ROBOTS){
 #ifdef DEBUG
@@ -124,6 +126,7 @@ PAIRS create_pairs(const std::vector<WorkingRobot*> &ROBOTS){
 
 typedef std::pair<WorkingRobot*, std::vector<CommanderRobot*>> ALL_COMS;
 typedef std::vector<ALL_COMS> DEPENDENCES;
+#ifdef DEBUG
 void print_dependences(const DEPENDENCES &dependences){
     for (auto it = dependences.begin(); it != dependences.end(); ++it){
         auto dep = *it;
@@ -137,7 +140,7 @@ void print_dependences(const DEPENDENCES &dependences){
         std::cout << "] " << std::endl;
     }
 }
-
+#endif
 DEPENDENCES create_dependences(PAIRS pairs){
     DEPENDENCES dependences {};
     //dependences.clear();

@@ -3,3 +3,4 @@
 /src/.ipynb_checkpoints
 /swarm_py/__pycache__
 vgcore.*
+/*/*.swp
