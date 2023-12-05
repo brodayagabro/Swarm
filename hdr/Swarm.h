@@ -19,7 +19,6 @@ class Swarm{
         bool is_included(WorkingRobot*);
         int add_robot(WorkingRobot*);
         int exclude_robot(WorkingRobot*);
-        int get_time()const;
 };
 
 

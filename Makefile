@@ -1,12 +1,12 @@
 TARGET := bin/ggtest
 
 CXX := g++
-CXXFLAGS := -Og -g -Wall -Wextra -Werror
+CXXFLAGS := -Og -g -Wall -Wextra -Werror #-fsanitize=address \
 
 
 LD := g++
 LDFLAGS := 
-LIBS := -lm -lgtest -lgmock -pthread
+LIBS := -lm -lgtest -lgmock -pthread #-lasan
 
 VPATH := src
 

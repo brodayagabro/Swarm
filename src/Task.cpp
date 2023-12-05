@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <exception>
 #include "../hdr/exceptions.h"
-Task::Task(std::string name, CommanderRobot* LiableCommander, district<float>* feild, int time, int count_of_robots){
+Task::Task(const std::string &name, CommanderRobot* LiableCommander, district<float>* feild, int time, int count_of_robots){
     if (name==""){
        throw  std::range_error("Name can't be null len!");
     }
@@ -28,6 +28,8 @@ Task::Task(std::string name, CommanderRobot* LiableCommander, district<float>* f
         throw std::runtime_error("Incorrect feild");
     }
     this->feild = feild;
+
+    this->curr_time = 0;
 };
 
 Task::~Task(){

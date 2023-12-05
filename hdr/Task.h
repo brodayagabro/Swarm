@@ -58,14 +58,16 @@ district<T>::~district(){};
 
 class Task{
     std::string task_name;
-    int time;
+    int time; int curr_time;
     int count_of_robots;
     CommanderRobot* LiableCommander;
     district <float>* feild;
 
     public:
         // Constructor
-        Task(std::string, CommanderRobot*, district <float>*, int time,
+        Task(const std::string&,
+                CommanderRobot*,
+                district <float>*, int time,
                 int count_of_robots);
         ~Task();
         // Methods to get status of private variables

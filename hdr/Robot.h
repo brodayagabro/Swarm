@@ -30,7 +30,7 @@ class Robot{
        // CommanderRobot *commander;
     public:
         // Constructor
-        Robot(double x=0, double y=0, double angle=0, std::string name="");
+        Robot(double x=0, double y=0, double angle=0, const std::string& name="");
         virtual ~Robot(){};
         // get info from private variables
         point* get_position() const;

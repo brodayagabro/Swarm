@@ -10,7 +10,7 @@ class CommanderRobot: public WorkingRobot{
         std::vector<WorkingRobot*> depens;
     public:
         CommanderRobot(double, double, double,
-                std::string, CommanderRobot*,
+                const std::string&, CommanderRobot*,
                 const std::vector<WorkingRobot*>&);
         virtual ~CommanderRobot(){};
         void add_dep(WorkingRobot*);
