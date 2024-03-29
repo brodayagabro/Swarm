@@ -24,6 +24,7 @@ Swarm::Swarm(const std::vector<WorkingRobot*> robots){
     std::sort(this->robots.begin(), this->robots.end(), CmpByName); 
     this->curent_time = 0;
 };
+Swarm::~Swarm(){};
 
 // Метод для получения Списка Роботов в Рое
 std::vector<WorkingRobot*> Swarm::get_robots(){
@@ -181,11 +182,7 @@ bool Update_dependences(ALL_COMS &dep, const PAIRS &pairs){
         if ((*C) != nullptr){
             R = (WorkingRobot*)(*C);
         } else{
-#ifndef DEBUG            
             continue;
-#else
-            continue;
-#endif
         }// Этого робота будем искать в списке зависимостей
         // Поиск пары по ключу
         auto pair = std::find_if(pairs.begin(), pairs.end(), 

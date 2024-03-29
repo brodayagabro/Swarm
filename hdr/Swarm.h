@@ -15,6 +15,7 @@ class Swarm{
     public:
         Swarm(const std::vector<WorkingRobot*>);
         std::vector<WorkingRobot*> get_robots();
+        virtual ~Swarm();
         void change_commander(WorkingRobot*, CommanderRobot*);
         bool is_included(WorkingRobot*);
         int add_robot(WorkingRobot*);

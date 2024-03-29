@@ -55,12 +55,14 @@ class district{
 };
 template<class T>
 district<T>::~district(){};
-
+typedef std::vector<struct point> POINTS;
+typedef std::vector<float> ANGLES;
 class Task{
     std::string task_name;
     int time; int curr_time;
     int count_of_robots;
     CommanderRobot* LiableCommander;
+    std::vector<WorkingRobot*> robots;
     district <float>* feild;
 
     public:
@@ -68,7 +70,8 @@ class Task{
         Task(const std::string&,
                 CommanderRobot*,
                 district <float>*, int time,
-                int count_of_robots);
+                int count_of_robots,
+                Swarm swarm);
         ~Task();
         // Methods to get status of private variables
         std::string get_name()const;
@@ -77,7 +80,10 @@ class Task{
         CommanderRobot* get_liable()const;
         district<float>* get_feild()const;
         // Method to get status of Robots in the task
-
+        POINTS get_status()const; 
+        ANGLES get_angles()const;
+        void make_step();
+        void run();
 
 
 };
